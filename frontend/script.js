@@ -4,18 +4,50 @@ const taskList = document.getElementById('taskList');
 
  
 
-taskForm.addEventListener('submit', (e) => { 
+const loadTasks = async () => { 
+
+    const response = await fetch('http://localhost:3000/tasks'); 
+
+    const tasks = await response.json(); 
+
+    taskList.innerHTML = ''; 
+
+    tasks.forEach(task => { 
+
+        const li = document.createElement('li'); 
+
+        li.textContent = task.name; 
+
+        taskList.appendChild(li); 
+
+    }); 
+
+}; 
+
+ 
+
+taskForm.addEventListener('submit', async (e) => { 
 
     e.preventDefault(); 
 
     const task = document.getElementById('taskInput').value; 
 
-    const li = document.createElement('li'); 
+    await fetch('http://localhost:3000/tasks', { 
 
-    li.textContent = task; 
+        method: 'POST', 
 
-    taskList.appendChild(li); 
+        headers: { 'Content-Type': 'application/json' }, 
+
+        body: JSON.stringify({ name: task }) 
+
+    }); 
+
+    loadTasks(); 
 
     document.getElementById('taskInput').value = ''; 
 
 }); 
+
+ 
+
+loadTasks(); 
